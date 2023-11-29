@@ -7,12 +7,11 @@ def str_2_vector(str):
     list[1] = int(list[1])
     return Vector2(list)
 
-def level_sf_server(start_speed, change_speed, max_speed, players_socket):
+def level_of_server(start_speed, change_speed, max_speed, players_socket):
     # Сама игра
-    print('lvl 1 Shared food')
-    game_over_check = False
+    print('lvl 2 One field')
     res = Vector2(0,0)
-    game_list = [MAIN(start_speed,change_speed,max_speed),MAIN(start_speed,change_speed,max_speed)]
+    main_game = MAIN(start_speed, change_speed,max_speed,None,True)
 
     while True:
         # Прием нажатий клавиш
@@ -25,71 +24,54 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
                 key = data.split('>')[-2]
 
                 # Обработка нажатий
-                if game_list[i].snake.direction.y == 0:
+                if main_game.snake_list[i].direction.y == 0:
                     if key == 'UP':
-                        game_list[i].snake.direction = Vector2(0, -1)
-                        game_list[i].snake.able_2_change_direction = False
+                        main_game.snake_list[i].direction = Vector2(0, -1)
+                        main_game.snake_list[i].able_2_change_direction = False
                     if key == 'DOWN':
-                        game_list[i].snake.direction = Vector2(0, 1)
-                        game_list[i].snake.able_2_change_direction = False
-                if game_list[i].snake.direction.x == 0:
+                        main_game.snake_list[i].direction = Vector2(0, 1)
+                        main_game.snake_list[i].able_2_change_direction = False
+                if main_game.snake_list[i].direction.x == 0:
                     if key == 'LEFT':
-                        game_list[i].snake.direction = Vector2(-1, 0)
-                        game_list[i].snake.able_2_change_direction = False
+                        main_game.snake_list[i].direction = Vector2(-1, 0)
+                        main_game.snake_list[i].able_2_change_direction = False
                     if key == 'RIGHT':
-                        game_list[i].snake.direction = Vector2(1, 0)
-                        game_list[i].snake.able_2_change_direction = False
+                        main_game.snake_list[i].direction = Vector2(1, 0)
+                        main_game.snake_list[i].able_2_change_direction = False
             except:
                 continue
-
+        print(main_game.game_over_check)
+        for i in range(2):
+            print(main_game.snake_list[i])
         # Обработка состояния
-        if game_list[0].snake.speed_update_flag or game_list[1].snake.speed_update_flag:
-            if game_list[0].snake.speed > game_list[1].snake.speed:
-                game_list[0].snake.speed = game_list[1].snake.speed
-            else:
-                game_list[1].snake.speed = game_list[0].snake.speed
-            pygame.time.set_timer(SCREEN_UPDATE, game_list[0].snake.speed)
-            game_list[0].snake.speed_update_flag = False
-            game_list[1].snake.speed_update_flag = False
-
-        counter1 = game_list[0].snake.snack_counter
-        counter2 = game_list[1].snake.snack_counter
-
-
+        for i in range(2):
+            if main_game.snake_list[i].speed_update_flag:
+                pygame.time.set_timer(SCREEN_UPDATE_list[i], main_game.snake_list[i].speed)
+                main_game.snake_list[i].speed_update_flag = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             for i in range(2):
-                if event.type == SCREEN_UPDATE and game_list[i].snake.direction != Vector2(0, 0):
-                    game_list[i].update()
-                    game_list[i].snake.able_2_change_direction = True
+                if event.type == SCREEN_UPDATE_list[i] and main_game.snake_list[i].direction != Vector2(0, 0):
+                    main_game.update(i)
+                    main_game.snake_list[i].able_2_change_direction = True
 
-
-        if game_list[0].snake.snack_counter - counter1 > 0:
-            game_list[1].snake.add_block()
-        if game_list[1].snake.snack_counter - counter2 > 0:
-            game_list[0].snake.add_block()
-
-        if game_list[0].game_over_check: # Первый проиграл
-            game_over_check = True
-            res += (0, 1)
-        if game_list[1].game_over_check: # Не elif потому что возможна ничья
-            game_over_check = True
-            res += (1, 0)
+        game_over_check = main_game.game_over_check
 
         for i in range(2):
             # Отправка данных
             message = str(int(game_over_check)) + '||'# game over
-            for block in game_list[i].snake.body:
-                message += str(block)[1:-1] + '|'
-            message += '|'
-            message += str(game_list[i].fruit.pos)[1:-1]
+            for j in range(2):
+                for block in main_game.snake_list[j].body:
+                    message += str(block)[1:-1] + '|'
+                message += '|'
+            message += str(main_game.fruit.pos)[1:-1]
             message += '||'
-            message += str(int(game_list[i].fruit_cut.fc_check)) + '|'
-            message += str(game_list[i].fruit_cut.pos)[1:-1]
+            message += str(int(main_game.fruit_cut.fc_check)) + '|'
+            message += str(main_game.fruit_cut.pos)[1:-1]
             message += '||'
-            for fruit in game_list[i].array_fruit_t:
+            for fruit in main_game.array_fruit_t:
                 message += str(fruit.pos)[1:-1] + '|'
             message += '|' + '>'
 
@@ -104,16 +86,20 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
                         sock.send(message.encode())
                     except:
                         pass
-                pygame.time.set_timer(SCREEN_UPDATE, 0) # остановка таймера (иначе смешно)
+                # остановка таймеров
+                for i in range(2):
+                    pygame.time.set_timer(SCREEN_UPDATE_list[i],0)
                 return
         if game_over_check:
-            pygame.time.set_timer(SCREEN_UPDATE, 0) # spot timer
-            return res
+            # остановка таймеров
+            for i in range(2):
+                pygame.time.set_timer(SCREEN_UPDATE_list[i], 0)
+            return main_game.scores
         clock.tick(framerate)
 
-def level_sf_client(sock, team):
-    print('lvl 1 client')
-    main_game = MAIN(0,0,0, team)
+def level_of_client(sock, team):
+    print('lvl 2 client')
+    main_game = MAIN(0,0,0, None, True)
     while True:
         key = None
         # Считывание команды с клавиш
@@ -135,7 +121,7 @@ def level_sf_client(sock, team):
         if key != None:
             message = key + '>'
             sock.send(message.encode())
-
+        print('до')
         # Получаем новое состояние
         data = sock.recv(2048)
         data = data.decode()
@@ -149,19 +135,20 @@ def level_sf_client(sock, team):
         if game_over:
             return
 
-        main_game.snake.body = data[1].split('|')
-        for i in range(len(main_game.snake.body)):
-            main_game.snake.body[i] = str_2_vector(main_game.snake.body[i])
+        for i in range(2):
+            main_game.snake_list[i].body = data[1+i].split('|')
+            for j in range(len(main_game.snake_list[i].body)):
+                main_game.snake_list[i].body[j] = str_2_vector(main_game.snake_list[i].body[j])
 
-        main_game.fruit.pos = str_2_vector(data[2])
+        main_game.fruit.pos = str_2_vector(data[3])
 
-        temp = data[3].split('|')
+        temp = data[4].split('|')
         main_game.fruit_cut.fc_check = bool(int(temp[0]))
         main_game.fruit_cut.pos = str_2_vector(temp[1])
 
         try:
             main_game.array_fruit_t.clear()
-            for pos in data[4].split('|'):
+            for pos in data[5].split('|'):
                 pos = str_2_vector(pos)
                 main_game.array_fruit_t.append(FRUIT_t(pos))
         except:

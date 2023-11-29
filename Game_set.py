@@ -31,7 +31,9 @@ blue_snake_head_color = (72, 103, 214)
 
 score_color = (56, 77, 12)
 
+# todo надо это отсюда убрать
 SCREEN_UPDATE = pygame.USEREVENT
+SCREEN_UPDATE_list = [pygame.USEREVENT + 1, pygame.USEREVENT + 2]
 
 def base_screen_fill():
     screen.fill(screen_color)

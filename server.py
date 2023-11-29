@@ -1,6 +1,7 @@
 import socket
 from Server_game_set import *
 from levels.Level_shared_food import level_sf_server
+from levels.Level_one_field import level_of_server
 
 import time
 
@@ -119,13 +120,13 @@ def game():
     game_score = call_res
 
     # Вызов второго уровня TODO Второй лвл
-    call_res = call_lvl(players_sockets, game_score, level_sf_server, 150, 20, 100)
+    call_res = call_lvl(players_sockets, game_score, level_of_server, 150, 20, 100)
     if call_res == -1:
         return -1
     game_score = call_res
 
     # Вызов третьего уровня TODO Третий лвл
-    call_res = call_lvl(players_sockets, game_score, level_sf_server, 150, 20, 100)
+    call_res = call_lvl(players_sockets, game_score, level_of_server, 150, 20, 100)
     if call_res == -1:
         return -1
     # game_score = call_res

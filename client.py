@@ -3,6 +3,7 @@ import time
 
 import pygame.event
 from levels.Level_shared_food import level_sf_client
+from levels.Level_one_field import level_of_client
 
 from Game_set import *
 
@@ -159,14 +160,19 @@ def game():
             return
         clock.tick(framerate)
 
-    # lvl 1
-    levels = [level_sf_client, level_sf_client, level_sf_client]
+    # lvls calls
+    levels = [level_sf_client, level_of_client, level_of_client]
+    # levels = [level_of_client, level_of_client, level_sf_client]
     call_res = None
-    for i in range(len(levels)):
-        lvl = levels[i]
-        call_res = call_lvl(sock, team, lvl, i + 1)
+    for number, lvl in enumerate(levels, 1):
+        call_res = call_lvl(sock, team, lvl, number)
         if call_res == -1:
             return -1
+    # for i in range(len(levels)):
+    #     lvl = levels[i]
+    #     call_res = call_lvl(sock, team, lvl, i + 1)
+    #     if call_res == -1:
+    #         return -1
     blue_score, red_score = call_res
     time.sleep(2)
 

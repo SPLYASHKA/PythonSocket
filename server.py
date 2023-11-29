@@ -64,8 +64,6 @@ def send_enemy_disabled(players_sockets):
             sock.send(message.encode())
         except:
             pass
-    return -1  # todo мб убрать
-
 
 def send_score(players_sockets, game_score):
     print('send_score')
@@ -84,7 +82,6 @@ def call_lvl(players_sockets, game_score, lvl, start_speed, change_speed, max_sp
         game_score += lvl(start_speed, change_speed, max_speed, players_sockets)
     except TypeError:
         wait_players_readiness(players_sockets)
-        send_enemy_disabled(players_sockets)
         return -1
 
     print(game_score)
@@ -151,6 +148,8 @@ while True:
         error = game()
         if error == 0:
             print('Игра прошла без ошибок')
+        elif error == -1:
+            send_enemy_disabled(players_sockets)
         elif error == 2:
             print('time limit')
 

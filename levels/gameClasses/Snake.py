@@ -91,6 +91,8 @@ class MAIN:
         self.blocks_from_enemy = 0
         self.able_2_change_direction = True
         self.game_over_check = False
+        if one_field:
+            self.scores = Vector2(0,0)
 
 
     def update(self):
@@ -176,23 +178,15 @@ class MAIN:
         if self.one_field:
             for block in self.snake_red.body:
                 if block == self.snake_blue.body[0]:
+                    self.scores += (0, 1)
                     self.game_over()
             for block in self.snake_blue.body:
                 if block == self.snake_red.body[0]:
+                    self.scores += (1, 0)
                     self.game_over()
 
     def game_over(self):
         self.game_over_check = True
-        # self.snake.reset()
-        # self.fruit_cut.reset()
-        # self.array_fruit_t.clear()
-        # self.blocks_from_enemy = 0
-        # # self.__init__(snake_start_speed, snake_change_speed, snake_max_speed)
-        # # надо подумать тут
-        #
-        #
-        # # pygame.quit()
-        # # sys.exit()
 
 
 

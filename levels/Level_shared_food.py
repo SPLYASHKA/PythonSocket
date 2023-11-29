@@ -139,8 +139,10 @@ def level_sf_client(sock, team):
         # Получаем новое состояние
         data = sock.recv(2048)
         data = data.decode()
+        print(data)
         data = data.split('>')[-2]
         data = data.split('||')
+        print(data)
 
         game_over = bool(int(data[0]))
 
@@ -149,24 +151,12 @@ def level_sf_client(sock, team):
 
         main_game.snake.body = data[1].split('|')
         for i in range(len(main_game.snake.body)):
-            # main_game.snake.body[i] = main_game.snake.body[i].split(', ')
-            # main_game.snake.body[i][0] = int(main_game.snake.body[i][0])
-            # main_game.snake.body[i][1] = int(main_game.snake.body[i][1])
-            # main_game.snake.body[i] = Vector2(main_game.snake.body[i])
             main_game.snake.body[i] = str_2_vector(main_game.snake.body[i])
 
-        # main_game.fruit.pos = data[2].split(', ')
-        # for cord in main_game.fruit.pos:
-        #     cord = int(cord)
-        # main_game.fruit.pos = Vector2(main_game.fruit.pos)
         main_game.fruit.pos = str_2_vector(data[2])
 
         temp = data[3].split('|')
         main_game.fruit_cut.fc_check = bool(int(temp[0]))
-        # main_game.fruit_cut.pos = temp[1].split(', ')
-        # for cord in main_game.fruit_cut.pos:
-        #     cord = int(cord)
-        # main_game.fruit_cut.pos = Vector2(main_game.fruit_cut.pos)
         main_game.fruit_cut.pos = str_2_vector(temp[1])
 
         try:

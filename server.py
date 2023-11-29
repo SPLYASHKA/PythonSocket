@@ -114,7 +114,7 @@ def game():
     game_score = Vector2(0, 0)
 
     # Вызов первого уровня
-    call_res = call_lvl(players_sockets, game_score, level_sf_server, 150, 20, 100)
+    call_res = call_lvl(players_sockets, game_score, level_sf_server, 150, 30, 40)
     if call_res == -1:
         return -1
     game_score = call_res

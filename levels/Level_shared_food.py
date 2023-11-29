@@ -82,7 +82,7 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
             # Отправка данных
 
             # template of data
-            # snake||fruit||fruit_cut||fruit_t>
+            # game_over_check||snake||fruit||fruit_cut||fruit_t>
             # snake = block1|block2|block3|...
             # fruit_t = fruit1|fruit2|...
 
@@ -169,7 +169,7 @@ def level_sf_client(sock, team):
             main_game.array_fruit_t.clear()
             for pos in data[4].split('|'):
                 pos = str_2_vector(pos)
-                main_game.array_fruit_t.append(FRUIT_t(pos))
+                main_game.array_fruit_t.append(FRUIT_t(pos, team))
         except:
             pass
 

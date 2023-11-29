@@ -25,9 +25,11 @@ snake_head_color = (173, 101, 112)
 
 red_snake_color = (255, 115, 115)
 red_snake_head_color = (255, 64, 64)
+red_snake_fruit_t_color = (166, 21, 21)
 
 blue_snake_color = (110, 132, 214)
 blue_snake_head_color = (72, 103, 214)
+blue_snake_fruit_t_color = (36, 58, 139)
 
 score_color = (56, 77, 12)
 

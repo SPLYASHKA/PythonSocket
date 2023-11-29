@@ -65,7 +65,7 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
             # Отправка данных
 
             # template of data
-            # snake1||snake2||fruit||fruit_cut||fruit_t>
+            # game_over_check||snake1||snake2||fruit||fruit_cut||fruit_t_blue||fruit_t_red>
             # snakei = block1|block2|block3|...
             # fruit_t = fruit1|fruit2|...
 
@@ -79,8 +79,21 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
             message += str(int(main_game.fruit_cut.fc_check)) + '|'
             message += str(main_game.fruit_cut.pos)[1:-1]
             message += '||'
+            print(main_game.array_fruit_t)
+            print(len(main_game.array_fruit_t))
+            if len(main_game.array_fruit_t) != 0:
+                print(main_game.array_fruit_t[0].team)
             for fruit in main_game.array_fruit_t:
-                message += str(fruit.pos)[1:-1] + '|'
+                if fruit.team == 'blue':
+                    print('gotcha')
+                    message += str(fruit.pos)[1:-1] + '|'
+            if len(main_game.array_fruit_t) == 0:
+                message += '|'
+            else:
+                message += '||'
+            for fruit in main_game.array_fruit_t:
+                if fruit.team == 'red':
+                    message += str(fruit.pos)[1:-1] + '|'
             message += '|' + '>'
 
             try:
@@ -158,7 +171,14 @@ def level_of_client(sock, team):
             main_game.array_fruit_t.clear()
             for pos in data[5].split('|'):
                 pos = str_2_vector(pos)
-                main_game.array_fruit_t.append(FRUIT_t(pos))
+                main_game.array_fruit_t.append(FRUIT_t(pos,'blue'))
+        except:
+            print('except!!!!')
+            pass
+        try:
+            for pos in data[6].split('|'):
+                pos = str_2_vector(pos)
+                main_game.array_fruit_t.append(FRUIT_t(pos, 'red'))
         except:
             pass
 

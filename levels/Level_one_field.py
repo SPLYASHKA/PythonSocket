@@ -56,6 +56,8 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
                 if event.type == SCREEN_UPDATE_list[i] and main_game.snake_list[i].direction != Vector2(0, 0):
                     main_game.update(i)
                     main_game.snake_list[i].able_2_change_direction = True
+            if event.type == SCREEN_UPDATE_list[0] or event.type == SCREEN_UPDATE_list[1]:
+                main_game.update()
 
         game_over_check = main_game.game_over_check
 

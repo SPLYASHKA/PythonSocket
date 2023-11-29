@@ -1,10 +1,8 @@
 from levels.gameClasses.Fruit import *
 
 
-
-
 class SNAKE:
-    def __init__(self, start_speed, change_speed, max_speed, team = None):
+    def __init__(self, start_speed, change_speed, max_speed, team=None):
         self.team = team
 
         self.start_speed = start_speed
@@ -20,7 +18,7 @@ class SNAKE:
             print('blue')
             self.body_color = blue_snake_color
             self.head_color = blue_snake_head_color
-        else: # Todo переписать не должно быть этого случая
+        else:  # Todo переписать не должно быть этого случая
             print('aaaaaa')
             self.body_color = snake_color
             self.head_color = snake_head_color
@@ -32,7 +30,7 @@ class SNAKE:
         # self.snack_counter = 0
         # self.fast = False
         # self.speed_update_flag = True
-        self.reset() # Хз стоит ли так делать или лучше как выше
+        self.reset()  # Хз стоит ли так делать или лучше как выше
 
     def draw_snake(self):
         for block in self.body[1:]:
@@ -62,14 +60,14 @@ class SNAKE:
 
     def reset(self):
         if self.team == 'red':
-            self.body = [Vector2(3,5), Vector2(3,4), Vector2(3, 3)]
+            self.body = [Vector2(3, 5), Vector2(3, 4), Vector2(3, 3)]
             self.direction = Vector2(0, 1)
         elif self.team == 'blue':
             self.body = [Vector2(15, 5), Vector2(15, 4), Vector2(15, 3)]
             self.direction = Vector2(0, 1)
         else:
             self.body = [Vector2(3, cell_number / 2), Vector2(2, cell_number / 2), Vector2(1, cell_number / 2)]
-            self.direction = Vector2(1,0)
+            self.direction = Vector2(1, 0)
 
         self.new_block = False
         self.speed = self.start_speed
@@ -79,10 +77,11 @@ class SNAKE:
 
 
 class MAIN:
-    def __init__(self, start_speed, change_speed, max_speed, team = None, one_field = False):
+    def __init__(self, start_speed, change_speed, max_speed, team=None, one_field=False):
         self.one_field = one_field
         if self.one_field:
-            self.snake_list = [SNAKE(start_speed,change_speed,max_speed,'blue'),SNAKE(start_speed,change_speed,max_speed,'red')]
+            self.snake_list = [SNAKE(start_speed, change_speed, max_speed, 'blue'),
+                               SNAKE(start_speed, change_speed, max_speed, 'red')]
         else:
             self.snake = SNAKE(start_speed, change_speed, max_speed, team)
         self.fruit = FRUIT()
@@ -91,16 +90,16 @@ class MAIN:
         self.blocks_from_enemy = 0
         self.game_over_check = False
         if one_field:
-            self.scores = Vector2(0,0)
+            self.scores = Vector2(0, 0)
 
-
-    def update(self, i = None):
-        if self.one_field and i != None:
+    def update(self, i=None):
+        if not self.one_field:
+            self.snake.move_snake()
+        if i is not None:
             self.snake_list[i].move_snake()
         else:
-            self.snake.move_snake()
-        self.check_fail()
-        self.check_snack()
+            self.check_fail()
+            self.check_snack()
         # print(self.snake.speed)
 
     def draw_elements(self):
@@ -191,7 +190,6 @@ class MAIN:
                     self.fruit_cut.randomize()
                     self.snake.speed = (self.snake.max_speed + self.snake.start_speed) // 2
                     self.snake.speed_update_flag = True
-
 
                 for block in self.snake.body[1:]:
                     if block == self.fruit.pos:

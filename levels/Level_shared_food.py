@@ -15,7 +15,6 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
     game_list = [MAIN(start_speed,change_speed,max_speed),MAIN(start_speed,change_speed,max_speed)]
 
     while True:
-        print('adafjhsljfglkasjdf')
         # Прием нажатий клавиш
         for i in range(2):
             sock = players_socket[i]
@@ -53,9 +52,6 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
             game_list[0].snake.speed_update_flag = False
             game_list[1].snake.speed_update_flag = False
 
-        print(game_list[0].snake.speed)
-        print(game_list[1].snake.speed)
-
         counter1 = game_list[0].snake.snack_counter
         counter2 = game_list[1].snake.snack_counter
 
@@ -66,8 +62,6 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
                 sys.exit()
             for i in range(2):
                 if event.type == SCREEN_UPDATE and game_list[i].snake.direction != Vector2(0, 0):
-                    print(i)
-                    print(event)
                     game_list[i].update()
                     game_list[i].able_2_change_direction = True
 
@@ -113,7 +107,6 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
                 pygame.time.set_timer(SCREEN_UPDATE, 0) # остановка таймера (иначе смешно)
                 return
         if game_over_check:
-            print('res')
             pygame.time.set_timer(SCREEN_UPDATE, 0) # spot timer
             return res
         clock.tick(framerate)
@@ -122,7 +115,6 @@ def level_sf_client(sock, team):
     print('lvl 1 client')
     main_game = MAIN(0,0,0, team)
     while True:
-        print('цикл идет')
         key = None
         # Считывание команды с клавиш
         for event in pygame.event.get():
@@ -147,10 +139,8 @@ def level_sf_client(sock, team):
         # Получаем новое состояние
         data = sock.recv(2048)
         data = data.decode()
-        print(data)
         data = data.split('>')[-2]
         data = data.split('||')
-        print(data)
 
         game_over = bool(int(data[0]))
 
@@ -182,7 +172,6 @@ def level_sf_client(sock, team):
         try:
             main_game.array_fruit_t.clear()
             for pos in data[4].split('|'):
-                print(pos)
                 pos = str_2_vector(pos)
                 main_game.array_fruit_t.append(FRUIT_t(pos))
         except:

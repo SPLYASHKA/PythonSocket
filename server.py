@@ -22,7 +22,11 @@ def wait_players_readiness(players_sockets, callback_requirement=False):
     players_ready = [False, False]
     counter_list = [0, 0]
     time = 0
-    while time < 5 * framerate:
+    if callback_requirement:
+        time_limit = 30 * framerate
+    else:
+        time_limit = 5 * framerate
+    while time < time_limit:
         if players_ready[0] and players_ready[1]:
             print('Игроки готовы')
             return 0
@@ -47,13 +51,12 @@ def wait_players_readiness(players_sockets, callback_requirement=False):
                         counter_list[i] += 1
                     except:
                         return -1
-        time += 1
+        time += 1  # не нужно ограничение в начале
         clock.tick(framerate)
+    return 2
 
 
 def send_enemy_disabled(players_sockets):
-    wait_players_readiness(players_sockets)
-
     # сообщение клиенту о том, что противник отключился
     for sock in players_sockets:
         try:
@@ -61,12 +64,10 @@ def send_enemy_disabled(players_sockets):
             sock.send(message.encode())
         except:
             pass
-    return -1
+    return -1  # todo мб убрать
 
 
 def send_score(players_sockets, game_score):
-    wait_players_readiness(players_sockets)
-
     print('send_score')
     for sock in players_sockets:
         try:
@@ -82,10 +83,12 @@ def call_lvl(players_sockets, game_score, lvl, start_speed, change_speed, max_sp
     try:
         game_score += lvl(start_speed, change_speed, max_speed, players_sockets)
     except TypeError:
+        wait_players_readiness(players_sockets)
         send_enemy_disabled(players_sockets)
         return -1
 
     print(game_score)
+    wait_players_readiness(players_sockets)
     # Отправка счета
     send_score(players_sockets, game_score)
 
@@ -106,7 +109,9 @@ def game():
         except:
             return -1
     # Готовность
-    wait_players_readiness(players_sockets, True)
+    error = wait_players_readiness(players_sockets, True)
+    if error != 0:
+        return error
 
     game_score = Vector2(0, 0)
 
@@ -146,6 +151,8 @@ while True:
         error = game()
         if error == 0:
             print('Игра прошла без ошибок')
+        elif error == 2:
+            print('time limit')
 
     # Проверка клиентов
     for sock in players_sockets:

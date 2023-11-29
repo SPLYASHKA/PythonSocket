@@ -75,7 +75,7 @@ def show_scores():
 
 def call_lvl(sock, team, lvl, number):
     lvl(sock, team)
-    print('end of lvl ' + number)
+    print('end of lvl ' + str(number))
 
     # Отправка готовности
     message = 'Ready'
@@ -121,8 +121,6 @@ def game():
             if data[0] == 'GAME!':
                 print('in game')
                 break
-        clock.tick(framerate)
-
     # Готовность
     show_big_text('Нажмите пробел', snake_color, 60)
     ready = False
@@ -155,6 +153,10 @@ def game():
         print(data)
         if data == 'Enemy ready':
             enemy_ready = True
+        else:
+            show_big_text('Соперник отключился', snake_color, 60)
+            time.sleep(3)
+            return
         clock.tick(framerate)
 
     # lvl 1

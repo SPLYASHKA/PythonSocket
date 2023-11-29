@@ -4,11 +4,6 @@ from pygame.math import Vector2
 
 pygame.init()
 
-# game set
-snake_start_speed = 150  # ms
-snake_change_speed = 20
-snake_max_speed = 50
-
 # base const
 framerate = 60
 cell_number = 20  # >= 10 меньше не имеет смысла
@@ -24,9 +19,31 @@ grass_color = (167, 209, 61)
 fruit_color = (126, 166, 114)
 fruit_cut_color = (150,5,255)
 fruit_t_color = (40,4,255)
+
 snake_color = (183, 111, 122)
-alt_snake_color = (0, 0, 0)
 snake_head_color = (173, 101, 112)
+
+red_snake_color = (255, 115, 115)
+red_snake_head_color = (255, 64, 64)
+
+blue_snake_color = (110, 132, 214)
+blue_snake_head_color = (72, 103, 214)
+
 score_color = (56, 77, 12)
 
 SCREEN_UPDATE = pygame.USEREVENT
+
+def base_screen_fill():
+    screen.fill(screen_color)
+    # draw grass
+    for row in range(cell_number):
+        if row % 2 == 0:
+            for col in range(cell_number):
+                if col % 2 == 0:
+                    grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                    pygame.draw.rect(screen, grass_color, grass_rect)
+        else:
+            for col in range(cell_number):
+                if col % 2 != 0:
+                    grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                    pygame.draw.rect(screen, grass_color, grass_rect)

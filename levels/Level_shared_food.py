@@ -80,6 +80,12 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
 
         for i in range(2):
             # Отправка данных
+
+            # template of data
+            # snake||fruit||fruit_cut||fruit_t>
+            # snake = block1|block2|block3|...
+            # fruit_t = fruit1|fruit2|...
+
             message = str(int(game_over_check)) + '||'# game over
             for block in game_list[i].snake.body:
                 message += str(block)[1:-1] + '|'

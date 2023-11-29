@@ -119,7 +119,7 @@ def game():
         return -1
     game_score = call_res
 
-    # Вызов второго уровня TODO Второй лвл
+    # Вызов второго уровня
     call_res = call_lvl(players_sockets, game_score, level_of_server, 150, 20, 100)
     if call_res == -1:
         return -1

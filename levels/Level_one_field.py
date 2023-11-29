@@ -63,6 +63,12 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
 
         for i in range(2):
             # Отправка данных
+
+            # template of data
+            # snake1||snake2||fruit||fruit_cut||fruit_t>
+            # snakei = block1|block2|block3|...
+            # fruit_t = fruit1|fruit2|...
+
             message = str(int(game_over_check)) + '||'# game over
             for j in range(2):
                 for block in main_game.snake_list[j].body:

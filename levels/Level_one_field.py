@@ -24,14 +24,14 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
                 key = data.split('>')[-2]
 
                 # Обработка нажатий
-                if main_game.snake_list[i].direction.y == 0:
+                if main_game.snake_list[i].direction.y == 0 and main_game.snake_list[i].able_2_change_direction:
                     if key == 'UP':
                         main_game.snake_list[i].direction = Vector2(0, -1)
                         main_game.snake_list[i].able_2_change_direction = False
                     if key == 'DOWN':
                         main_game.snake_list[i].direction = Vector2(0, 1)
                         main_game.snake_list[i].able_2_change_direction = False
-                if main_game.snake_list[i].direction.x == 0:
+                if main_game.snake_list[i].direction.x == 0 and main_game.snake_list[i].able_2_change_direction:
                     if key == 'LEFT':
                         main_game.snake_list[i].direction = Vector2(-1, 0)
                         main_game.snake_list[i].able_2_change_direction = False

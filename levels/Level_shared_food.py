@@ -25,14 +25,14 @@ def level_sf_server(start_speed, change_speed, max_speed, players_socket):
                 key = data.split('>')[-2]
 
                 # Обработка нажатий
-                if game_list[i].snake.direction.y == 0:
+                if game_list[i].snake.direction.y == 0 and game_list[i].snake.able_2_change_direction:
                     if key == 'UP':
                         game_list[i].snake.direction = Vector2(0, -1)
                         game_list[i].snake.able_2_change_direction = False
                     if key == 'DOWN':
                         game_list[i].snake.direction = Vector2(0, 1)
                         game_list[i].snake.able_2_change_direction = False
-                if game_list[i].snake.direction.x == 0:
+                if game_list[i].snake.direction.x == 0 and game_list[i].snake.able_2_change_direction:
                     if key == 'LEFT':
                         game_list[i].snake.direction = Vector2(-1, 0)
                         game_list[i].snake.able_2_change_direction = False

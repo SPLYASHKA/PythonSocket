@@ -90,8 +90,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
 # sock.connect(('localhost',5555))
-sock.connect(('192.168.0.101', 5555))  # локальный ip ноута
-# sock.connect(('77.232.132.161',5555)) # ip сервера
+# sock.connect(('192.168.0.101', 5555))  # локальный ip ноута
+sock.connect(('77.232.132.161',5555)) # ip сервера
 
 print('connect')
 

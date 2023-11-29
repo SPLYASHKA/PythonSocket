@@ -257,9 +257,9 @@ class MAIN:
 
     def game_over(self):
         # бесмертие для dev
-        if not self.one_field:
-            self.game_over_check = True
-        # self.game_over_check = True
+        # if not self.one_field:
+        #     self.game_over_check = True
+        self.game_over_check = True
 
     def full_reset(self):
         if self.one_field:

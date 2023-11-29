@@ -23,13 +23,7 @@ class SNAKE:
             self.body_color = snake_color
             self.head_color = snake_head_color
 
-        # self.body = [Vector2(3, cell_number / 2), Vector2(2, cell_number / 2), Vector2(1, cell_number / 2)]
-        # self.direction = Vector2(0, 0)
-        # self.new_block = False
-        # self.speed = self.start_speed
-        # self.snack_counter = 0
-        # self.fast = False
-        # self.speed_update_flag = True
+
         self.reset()  # Хз стоит ли так делать или лучше как выше
 
     def draw_snake(self):
@@ -209,17 +203,18 @@ class MAIN:
                     else:
                         self.snake.speed -= self.snake.change_speed // 2
                     self.snake.speed_update_flag = True
-
+                # todo тут это не надо будто бы
                 for block in self.snake.body[1:]:
                     if block == self.fruit.pos:
                         self.fruit.randomize()
 
     def generator_fruit_t(self, snake):
+        print(snake.team)
         # todo тут надо переписать чтобы разные fruit_t появлялись (да и сам fruit_t)
         body_copy = snake.body[3:]
         snake.body = snake.body[:3]
         for block in body_copy:
-            self.array_fruit_t.append(FRUIT_t(block))
+            self.array_fruit_t.append(FRUIT_t(block, snake.team))
 
     def check_fail(self):
         # границы экрана
@@ -251,8 +246,20 @@ class MAIN:
                     self.scores += (0, 1)
                     self.game_over()
 
+        if self.one_field:
+            # fruit_t
+            for i in range(2):
+                for fruit in self.array_fruit_t:
+                    if fruit.team != self.snake_list[i].team:
+                        if fruit.pos == self.snake_list[i].body[0]:
+                            self.scores += (i, 1 - i)
+                            self.game_over()
+
     def game_over(self):
-        self.game_over_check = True
+        # бесмертие для dev
+        if not self.one_field:
+            self.game_over_check = True
+        # self.game_over_check = True
 
     def full_reset(self):
         if self.one_field:

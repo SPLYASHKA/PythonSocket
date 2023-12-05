@@ -96,11 +96,19 @@ class MAIN:
             self.snake_list[i].move_snake()
             return
 
-        # main
+        # main:
+
+        # 1.cannibalism
         if self.cannibalism:
             self.check_cannibalism()
+        # 2. check fail
         self.check_fail()
-        self.check_snack()
+        # 3.check snack
+        if self.one_field:
+            for i in range(2):
+                self.check_snack(self.snake_list[i])
+        else:
+            self.check_snack(self.snake)
         # print(self.snake.speed)
 
     def draw_elements(self):
@@ -123,105 +131,45 @@ class MAIN:
         else:
             snake.speed -= snake.change_speed
         snake.speed_update_flag = True
-    def check_snack(self):
-        # todo snake mutable поэтому стоит переписать получше это дерьмо
-        if self.one_field:
-            for i in range(2):
-                # regular fruit
-                if self.fruit.pos == self.snake_list[i].body[0]:
-                    self.snake_list[i].snack_counter += 1
-                    self.fruit.randomize()
-                    self.snake_list[i].add_block()
-                    if self.snake_list[i].speed - self.snake_list[i].change_speed < self.snake_list[i].max_speed:
-                        self.snake_list[i].fast = True
-                    else:
-                        self.snake_list[i].speed -= self.snake_list[i].change_speed
-                    self.snake_list[i].speed_update_flag = True
 
-                for block in self.snake_list[i].body[1:]:
-                    if block == self.fruit.pos:
-                        self.fruit.randomize()
+    def check_snack(self, snake):
+        # regular fruit
+        if self.fruit.pos == snake.body[0]:
+            self.fruit.randomize()
+            self.base_snake_influence(snake)
 
-                # fruit_cut
-                if self.fruit_cut.fc_check:
-                    if self.fruit_cut.pos == self.snake_list[i].body[0]:
-                        self.fruit_cut.fc_check = False
-                        self.generator_fruit_t(self.snake_list[i])
-                        self.snake_list[i].snack_counter += 2
-                        self.fruit_cut.randomize()
-                        self.snake_list[i].speed = (self.snake_list[i].max_speed + self.snake_list[i].start_speed) // 2
-                        self.snake_list[i].speed_update_flag = True
-
-                    for block in self.snake_list[i].body[1:]:
-                        if block == self.fruit.pos:
-                            self.fruit.randomize()
-
-                if not ((self.snake_list[0].snack_counter + self.snake_list[1].snack_counter) % 10 or self.fruit_cut.fc_check):
-                    self.fruit_cut.fc_check = True
-
-                # fruit_t
-                for fruit in self.array_fruit_t:
-                    if fruit.pos == self.snake_list[i].body[0]:
-                        self.array_fruit_t.remove(fruit)  # pop
-                        self.snake_list[i].add_block()
-                        if self.snake_list[i].speed - self.snake_list[i].change_speed // 2 < self.snake_list[i].max_speed:
-                            self.snake_list[i].fast = True
-                            self.snake_list[i].speed = self.snake_list[i].max_speed
-                        else:
-                            self.snake_list[i].speed -= self.snake_list[i].change_speed // 2
-                        self.snake_list[i].speed_update_flag = True
-
-                    for block in self.snake_list[i].body[1:]:
-                        if block == self.fruit.pos:
-                            self.fruit.randomize()
-        else:
-            # regular fruit
-            if self.fruit.pos == self.snake.body[0]:
-                self.snake.snack_counter += 1
+        for block in snake.body[1:]:
+            if block == self.fruit.pos:
                 self.fruit.randomize()
-                self.snake.add_block()
-                if self.snake.speed - self.snake.change_speed < self.snake.max_speed:
-                    self.snake.fast = True
-                else:
-                    self.snake.speed -= self.snake.change_speed
-                self.snake.speed_update_flag = True
 
-            for block in self.snake.body[1:]:
+        # fruit_cut
+        if self.fruit_cut.fc_check:
+            if self.fruit_cut.pos == snake.body[0]:
+                self.fruit_cut.fc_check = False
+                self.generator_fruit_t(snake)
+                snake.snack_counter += 2
+                self.fruit_cut.randomize()
+                snake.speed = (snake.max_speed + snake.start_speed) // 2
+                snake.speed_update_flag = True
+
+            for block in snake.body[1:]:
                 if block == self.fruit.pos:
                     self.fruit.randomize()
 
-            # fruit_cut
-            if self.fruit_cut.fc_check:
-                if self.fruit_cut.pos == self.snake.body[0]:
-                    self.fruit_cut.fc_check = False
-                    self.generator_fruit_t(self.snake)
-                    self.snake.snack_counter += 2
-                    self.fruit_cut.randomize()
-                    self.snake.speed = (self.snake.max_speed + self.snake.start_speed) // 2
-                    self.snake.speed_update_flag = True
+        if not (snake.snack_counter % 10 or self.fruit_cut.fc_check):
+            self.fruit_cut.fc_check = True
 
-                for block in self.snake.body[1:]:
-                    if block == self.fruit.pos:
-                        self.fruit.randomize()
-
-            if not (self.snake.snack_counter % 10 or self.fruit_cut.fc_check):
-                self.fruit_cut.fc_check = True
-
-            # fruit_t
-            for fruit in self.array_fruit_t:
-                if fruit.pos == self.snake.body[0]:
-                    self.array_fruit_t.remove(fruit)  # pop
-                    self.snake.add_block()
-                    if self.snake.speed - self.snake.change_speed // 2 < self.snake.max_speed:
-                        self.snake.fast = True
-                        self.snake.speed = self.snake.max_speed
-                    else:
-                        self.snake.speed -= self.snake.change_speed // 2
-                    self.snake.speed_update_flag = True
-                # todo тут это не надо будто бы
-                for block in self.snake.body[1:]:
-                    if block == self.fruit.pos:
-                        self.fruit.randomize()
+        # fruit_t
+        for fruit in self.array_fruit_t:
+            if fruit.pos == snake.body[0]:
+                self.array_fruit_t.remove(fruit)  # pop
+                snake.add_block()
+                if snake.speed - snake.change_speed // 2 < snake.max_speed:
+                    snake.fast = True
+                    snake.speed = snake.max_speed
+                else:
+                    snake.speed -= snake.change_speed // 2
+                snake.speed_update_flag = True
 
     def generator_fruit_t(self, snake):
         print(snake.team)

@@ -19,7 +19,7 @@ class SNAKE:
             self.body_color = blue_snake_color
             self.head_color = blue_snake_head_color
         else:  # Todo переписать не должно быть этого случая
-            print('aaaaaa')
+            print('no team')
             self.body_color = snake_color
             self.head_color = snake_head_color
 
@@ -71,7 +71,7 @@ class SNAKE:
 
 
 class MAIN:
-    def __init__(self, start_speed, change_speed, max_speed, team=None, one_field=False):
+    def __init__(self, start_speed, change_speed, max_speed, team=None, one_field=False, walls_kill=True, cannibalism=False):
         self.one_field = one_field
         if self.one_field:
             self.snake_list = [SNAKE(start_speed, change_speed, max_speed, 'blue'),
@@ -85,15 +85,22 @@ class MAIN:
         self.game_over_check = False
         if one_field:
             self.scores = Vector2(0, 0)
+        self.walls_kill = walls_kill
+        self.cannibalism = cannibalism
 
     def update(self, i=None):
+        # move snake
         if not self.one_field:
             self.snake.move_snake()
-        if i is not None:
+        elif i is not None:
             self.snake_list[i].move_snake()
-        else:
-            self.check_fail()
-            self.check_snack()
+            return
+
+        # main
+        if self.cannibalism:
+            self.check_cannibalism()
+        self.check_fail()
+        self.check_snack()
         # print(self.snake.speed)
 
     def draw_elements(self):
@@ -108,6 +115,14 @@ class MAIN:
         for fruit in self.array_fruit_t:
             fruit.draw_fruit_t()
 
+    def base_snake_influence(self, snake):  # todo переписать через это чек снек
+        snake.snack_counter += 1
+        snake.add_block()
+        if snake.speed - snake.change_speed < snake.max_speed:
+            snake.fast = True
+        else:
+            snake.speed -= snake.change_speed
+        snake.speed_update_flag = True
     def check_snack(self):
         # todo snake mutable поэтому стоит переписать получше это дерьмо
         if self.one_field:
@@ -210,7 +225,6 @@ class MAIN:
 
     def generator_fruit_t(self, snake):
         print(snake.team)
-        # todo тут надо переписать чтобы разные fruit_t появлялись (да и сам fruit_t)
         body_copy = snake.body[3:]
         snake.body = snake.body[:3]
         for block in body_copy:
@@ -220,22 +234,33 @@ class MAIN:
         # границы экрана
         if self.one_field:
             for i in range(2):
+                print('aaaa', i)
+                print(self.snake_list[i].body[0])
                 if not 0 <= self.snake_list[i].body[0].x < cell_number or not 0 <= self.snake_list[i].body[0].y < cell_number:
-                    self.scores += (i, 1-i)
-                    self.game_over()
-
+                    if self.walls_kill:
+                        print('tut', i)
+                        self.scores += (i, 1-i)
+                        self.game_over()
+                    else:
+                        self.snake_list[i].body[0].x %= cell_number
+                        self.snake_list[i].body[0].y %= cell_number
+                # Коллизия с собой
                 for block in self.snake_list[i].body[1:]:
                     if block == self.snake_list[i].body[0]:
                         self.scores += (i, 1 - i)
                         self.game_over()
         else:
             if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
-                self.game_over()
+                if self.walls_kill:
+                    self.game_over()
+                else:
+                    self.snake.body[0].x %= cell_number
+                    self.snake.body[0].y %= cell_number
 
             for block in self.snake.body[1:]:
                 if block == self.snake.body[0]:
                     self.game_over()
-
+        # С другой змеей
         if self.one_field:
             for block in self.snake_list[0].body:
                 if block == self.snake_list[1].body[0]:
@@ -254,6 +279,19 @@ class MAIN:
                         if fruit.pos == self.snake_list[i].body[0]:
                             self.scores += (i, 1 - i)
                             self.game_over()
+
+        # проверка не съели ли кого-то
+        if self.cannibalism:
+            for i, snake in enumerate(self.snake_list):
+                if len(snake.body) <= 1:
+                    self.scores += (i, 1 - i)
+                    self.game_over()
+
+    def check_cannibalism(self):
+        for i in range(2):
+            if self.snake_list[i].body[0] == self.snake_list[1 - i].body[-1]:
+                self.snake_list[1 - i].body.pop()
+                self.base_snake_influence(self.snake_list[i])
 
     def game_over(self):
         # бесмертие для dev

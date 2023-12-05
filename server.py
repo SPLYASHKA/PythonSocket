@@ -1,7 +1,9 @@
 import socket
 from Server_game_set import *
+
 from levels.Level_shared_food import level_sf_server
 from levels.Level_one_field import level_of_server
+from levels.Level_bite_another import level_ba_server
 
 import time
 
@@ -52,7 +54,7 @@ def wait_players_readiness(players_sockets, callback_requirement=False):
                         counter_list[i] += 1
                     except:
                         return -1
-        time += 1  # не нужно ограничение в начале
+        time += 1
         clock.tick(framerate)
     return 2
 
@@ -126,7 +128,7 @@ def game():
     game_score = call_res
 
     # Вызов третьего уровня TODO Третий лвл
-    call_res = call_lvl(players_sockets, game_score, level_of_server, 150, 20, 100)
+    call_res = call_lvl(players_sockets, game_score, level_ba_server, 150, 20, 100)
     if call_res == -1:
         return -1
     # game_score = call_res
@@ -135,7 +137,7 @@ def game():
 
 # Подключение игроков
 run = __name__ == '__main__'
-while True:
+while run:
     # Проверка желающих подключиться
     try:
         new_socket, addr = main_socket.accept()

@@ -1,5 +1,6 @@
 from levels.gameClasses.Snake import *
 
+# ♫Another one bites the dust♫
 
 def str_2_vector(str):
     list = str.split(', ')
@@ -7,13 +8,15 @@ def str_2_vector(str):
     list[1] = int(list[1])
     return Vector2(list)
 
-def level_of_server(start_speed, change_speed, max_speed, players_socket):
+def level_ba_server(start_speed, change_speed, max_speed, players_socket):
     # Сама игра
-    print('lvl 2 One field')
+    print('lvl 3 Bite another')
     res = Vector2(0,0)
-    main_game = MAIN(start_speed, change_speed,max_speed,None,True)
+    main_game = MAIN(start_speed, change_speed,max_speed,None,True, False, True)
 
-    while True:
+    time = 0
+    time_limit = 100 * framerate
+    while time < time_limit:
         # Прием нажатий клавиш
         for i in range(2):
             sock = players_socket[i]
@@ -107,11 +110,37 @@ def level_of_server(start_speed, change_speed, max_speed, players_socket):
             for i in range(2):
                 pygame.time.set_timer(SCREEN_UPDATE_list[i], 0)
             return main_game.scores
+        time += 1
         clock.tick(framerate)
 
-def level_of_client(sock, team):
-    print('lvl 2 client')
-    main_game = MAIN(0,0,0, None, True)
+    # окончание игры по tl (правильное окончание этого уровня)
+
+    # 1.остановка таймеров
+    for i in range(2):
+        pygame.time.set_timer(SCREEN_UPDATE_list[i], 0)
+
+    # 2.отправка окончания игры
+    for sock in players_socket:
+        try:
+            message = '1>'
+            sock.send(message.encode())
+        except:
+            return
+
+    # 3.выбор победителя по длине
+    if len(main_game.snake_list[0].body) > len(main_game.snake_list[1].body):
+        main_game.scores += (1, 0)
+    elif len(main_game.snake_list[0].body) < len(main_game.snake_list[1].body):
+        main_game.scores += (0, 1)
+    else:
+        main_game.scores += (1 , 1)
+
+    # 4.return счет
+    return main_game.scores
+
+def level_ba_client(sock, team):
+    print('lvl 3 client')
+    main_game = MAIN(0,0,0, None, True, False)
     while True:
         key = None
         # Считывание команды с клавиш

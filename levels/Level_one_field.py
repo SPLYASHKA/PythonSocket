@@ -10,7 +10,6 @@ def str_2_vector(str):
 def level_of_server(start_speed, change_speed, max_speed, players_socket):
     # Сама игра
     print('lvl 2 One field')
-    res = Vector2(0,0)
     main_game = MAIN(start_speed, change_speed,max_speed,None,True)
 
     while True:

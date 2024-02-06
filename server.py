@@ -99,7 +99,6 @@ def call_lvl(players_sockets, game_score, lvl, start_speed, change_speed, max_sp
 
 # main function
 def game():
-    # time.sleep(1)
     print('GAME!')
     for i in range(2):
         sock = players_sockets[i]
@@ -131,7 +130,6 @@ def game():
     call_res = call_lvl(players_sockets, game_score, level_ba_server, 150, 20, 100)
     if call_res == -1:
         return -1
-    # game_score = call_res
     return 0
 
 

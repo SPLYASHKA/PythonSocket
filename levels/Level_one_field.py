@@ -130,7 +130,7 @@ def level_of_client(sock, team):
                     key = 'RIGHT'
 
         # Отправка на сервер команды
-        if key != None:
+        if key is not None:
             message = key + '>'
             sock.send(message.encode())
         # Получаем новое состояние

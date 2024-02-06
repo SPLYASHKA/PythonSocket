@@ -109,7 +109,6 @@ class MAIN:
                 self.check_snack(self.snake_list[i])
         else:
             self.check_snack(self.snake)
-        # print(self.snake.speed)
 
     def draw_elements(self):
         self.fruit.draw_fruit()

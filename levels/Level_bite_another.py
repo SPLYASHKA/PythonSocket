@@ -11,7 +11,6 @@ def str_2_vector(str):
 def level_ba_server(start_speed, change_speed, max_speed, players_socket):
     # Сама игра
     print('lvl 3 Bite another')
-    res = Vector2(0,0)
     main_game = MAIN(start_speed, change_speed,max_speed,None,True, False, True)
 
     time = 0
